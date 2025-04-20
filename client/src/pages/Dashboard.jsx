@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [resumes, setResumes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, resumeId: null });
+  const [isHeaderVisible, setIsHeaderVisible] = useState(false); // Add this state
   const navigate = useNavigate();
   const auth = getAuth();
   const user = auth.currentUser;
@@ -78,7 +79,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <div className="dashboard-header">
+      <div className={`dashboard-header ${!isHeaderVisible ? 'header-hidden' : ''}`}>
         <div className="header-content">
           <h1>Resume<span className="text-gradient">Vault</span></h1>
           <div className="header-right">
@@ -105,6 +106,13 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <button 
+        className="header-toggle"
+        onClick={() => setIsHeaderVisible(!isHeaderVisible)}
+      >
+        {isHeaderVisible ? '↑' : '↓'}
+      </button>
 
       <main className="dashboard-main">
         <div className="welcome-section">
