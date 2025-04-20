@@ -919,20 +919,27 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1rem;
     position: relative;
     overflow: hidden;
   }
   
+  .auth-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+
   .auth-box {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
-    padding: 2.5rem;
+    padding: 2rem;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     width: 100%;
-    max-width: 420px;
     transition: all 0.3s ease;
   }
   
@@ -954,17 +961,13 @@ body {
   }
   
   .brand-header h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 0.5rem 0;
-    text-align: center;
+    font-size: clamp(1.5rem, 5vw, 1.8rem);
+    margin-bottom: 0.5rem;
   }
   
   .brand-subtitle {
-    color: rgba(255, 255, 255, 0.6);
-    text-align: center;
-    margin-bottom: 2rem;
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    margin-bottom: 1.5rem;
   }
   
   .auth-form {
@@ -974,10 +977,9 @@ body {
   }
   
   .form-title {
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1.5rem;
-    text-align: center;
+    font-size: clamp(1.9rem, 4vw, 1.9rem);
+    align-self: center;
+    /* justify-items: center; */
   }
   
   .form-group {
@@ -986,13 +988,14 @@ body {
   
   .auth-input {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: clamp(0.5rem, 3vw, 0.75rem) 1rem;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     color: white;
     margin-bottom: 1rem;
     transition: all 0.2s ease;
+    font-size: clamp(0.9rem, 3vw, 1rem);
   }
   
   .auth-input:focus {
@@ -1007,10 +1010,11 @@ body {
   
   .auth-button {
     width: 100%;
-    padding: 0.75rem;
+    padding: clamp(0.6rem, 3vw, 0.75rem);
     border-radius: 8px;
     font-weight: 600;
     transition: all 0.2s ease;
+    font-size: clamp(0.9rem, 3vw, 1rem);
   }
   
   .auth-button.google {
@@ -1082,6 +1086,64 @@ body {
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-container {
+      padding: 0 1rem;
+    }
+    
+    .auth-box {
+      padding: 1.5rem;
+    }
+
+    .auth-divider {
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+  
+    .social-auth {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  
+    .auth-button.google {
+      padding: 0.6rem;
+    }
+  
+    .auth-button.google img {
+      width: 18px;
+      height: 18px;
+    }
+  
+    .auth-switch {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .auth-box {
+      padding: 1.25rem;
+    }
+  
+    .brand-header {
+      margin-bottom: 1.5rem;
+    }
+  
+    .auth-input {
+      margin-bottom: 0.75rem;
+    }
+  }
+  
+  @media (max-height: 600px) {
+    .auth-page {
+      align-items: flex-start;
+      padding: 1rem;
+    }
+  
+    .auth-box {
+      margin: 1rem auto;
     }
   }
 
