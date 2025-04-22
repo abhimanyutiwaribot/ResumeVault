@@ -37,223 +37,148 @@ export const saveResume = async (resumeData) => {
 };
 
 export const generateResumeHTML = (data) => {
+  // Split responsibilities into bullet points if it's a string
+  const formatResponsibilities = (responsibilities) => {
+    if (!responsibilities) return '';
+    // Split by new lines or periods to create bullet points
+    const bullets = responsibilities.split(/[.\n]+/).filter(item => item.trim());
+    return bullets.map(item => `<li>${item.trim()}</li>`).join('');
+  };
+
   return `
-    <!DOCTYPE html>
     <html>
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${data.personalInfo.fullName} - Resume</title>
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          font-family: 'Segoe UI', Arial, sans-serif;
-        }
-        
-        body {
-          max-width: 850px;
-          margin: 40px auto;
-          padding: 40px;
-          background: #ffffff;
-          color: #2d3748;
-          line-height: 1.6;
-        }
-
-        .header {
-          text-align: center;
-          margin-bottom: 2.5rem;
-          padding-bottom: 2.5rem;
-          border-bottom: 2px solid #e2e8f0;
-        }
-
-        .header h1 {
-          font-size: 2.5rem;
-          color: #1a202c;
-          margin-bottom: 0.5rem;
-          letter-spacing: -0.5px;
-        }
-
-        .contact-info {
-          color: #4a5568;
-          font-size: 1.1rem;
-        }
-
-        .contact-info a {
-          color: #4299e1;
-          text-decoration: none;
-        }
-
-        .section {
-          margin-bottom: 2rem;
-          padding-bottom: 1rem;
-        }
-
-        .section-title {
-          font-size: 1.5rem;
-          color: #2b6cb0;
-          margin-bottom: 1.2rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #e2e8f0;
-          font-weight: 600;
-        }
-
-        .summary {
-          font-size: 1.1rem;
-          color: #4a5568;
-          line-height: 1.8;
-          margin-bottom: 2rem;
-        }
-
-        .experience-item, .education-item {
-          margin-bottom: 1.5rem;
-          break-inside: avoid;
-        }
-
-        .experience-item h3, .education-item h3 {
-          color: #2d3748;
-          font-size: 1.2rem;
-          margin-bottom: 0.3rem;
-        }
-
-        .experience-meta, .education-meta {
-          color: #718096;
-          font-size: 0.95rem;
-          margin-bottom: 0.8rem;
-        }
-
-        .responsibilities {
-          color: #4a5568;
-          padding-left: 1.2rem;
-        }
-
-        .skills-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 2rem;
-          margin-top: 1rem;
-        }
-
-        .skills-category h3 {
-          color: #2d3748;
-          font-size: 1.1rem;
-          margin-bottom: 0.8rem;
-        }
-
-        .skills-list {
-          color: #4a5568;
-          line-height: 1.6;
-        }
-
-        .certification-item {
-          margin-bottom: 1rem;
-        }
-
-        .certification-item h3 {
-          color: #2d3748;
-          font-size: 1.1rem;
-          margin-bottom: 0.3rem;
-        }
-
-        .certification-meta {
-          color: #718096;
-          font-size: 0.95rem;
-        }
-
-        @media print {
+      <head>
+        <style>
           body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.3;
             margin: 0;
             padding: 20px;
+            color: #333;
           }
-
-          .header {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
+          .header { margin-bottom: 12px; }
+          h1 { 
+            font-size: 16pt;
+            margin: 0 0 4px 0;
           }
-
-          .section {
-            page-break-inside: avoid;
+          h2 {
+            font-size: 12pt;
+            margin: 8px 0 4px 0;
+            border-bottom: 1px solid #ccc;
           }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <h1>${data.personalInfo.fullName}</h1>
-        <div class="contact-info">
-          ${data.personalInfo.email} • ${data.personalInfo.phone} • ${data.personalInfo.location}<br>
-          ${data.personalInfo.linkedIn ? `<a href="${data.personalInfo.linkedIn}" target="_blank">LinkedIn Profile</a>` : ''}
+          .contact-info {
+            font-size: 9pt;
+            margin: 0;
+          }
+          .section { margin-bottom: 12px; }
+          .experience-item, .education-item {
+            margin-bottom: 8px;
+          }
+          .job-title, .degree {
+            font-weight: bold;
+            font-size: 10pt;
+          }
+          .company, .institution {
+            font-weight: normal;
+          }
+          .dates {
+            float: right;
+            font-size: 9pt;
+          }
+          ul {
+            margin: 4px 0;
+            padding-left: 20px;
+          }
+          li {
+            margin: 2px 0;
+            font-size: 9pt;
+          }
+          .skills-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 9pt;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>${data.personalInfo.fullName}</h1>
+          <div class="contact-info">
+            ${data.personalInfo.email} • ${data.personalInfo.phone} • ${data.personalInfo.location}<br>
+            ${data.personalInfo.linkedIn ? `<a href="${data.personalInfo.linkedIn}" target="_blank">LinkedIn Profile</a>` : ''}
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2 class="section-title">Professional Summary</h2>
-        <div class="summary">${data.summary}</div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">Experience</h2>
-        ${data.workExperience.map(exp => `
-          <div class="experience-item">
-            <h3>${exp.title} - ${exp.company}</h3>
-            <div class="experience-meta">${exp.startDate} - ${exp.endDate} | ${exp.location}</div>
-            <div class="responsibilities">${exp.responsibilities}</div>
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">Education</h2>
-        ${data.education.map(edu => `
-          <div class="education-item">
-            <h3>${edu.degree}</h3>
-            <div class="education-meta">
-              ${edu.institution} | ${edu.location}<br>
-              Graduated: ${edu.graduationDate} ${edu.gpa ? `| GPA: ${edu.gpa}` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">Skills</h2>
-        <div class="skills-grid">
-          <div class="skills-category">
-            <h3>Technical Skills</h3>
-            <div class="skills-list">${data.skills.technical}</div>
-          </div>
-          <div class="skills-category">
-            <h3>Soft Skills</h3>
-            <div class="skills-list">${data.skills.softSkills}</div>
-          </div>
-          ${data.skills.tools ? `
-            <div class="skills-category">
-              <h3>Tools & Technologies</h3>
-              <div class="skills-list">${data.skills.tools}</div>
-            </div>
-          ` : ''}
-          ${data.skills.languages ? `
-            <div class="skills-category">
-              <h3>Languages</h3>
-              <div class="skills-list">${data.skills.languages}</div>
-            </div>
-          ` : ''}
-        </div>
-      </div>
-
-      ${data.certifications.length > 0 ? `
         <div class="section">
-          <h2 class="section-title">Certifications</h2>
-          ${data.certifications.map(cert => `
-            <div class="certification-item">
-              <h3>${cert.name}</h3>
-              <div class="certification-meta">${cert.issuer} | ${cert.date}</div>
+          <h2>Professional Summary</h2>
+          <p>${data.summary}</p>
+        </div>
+
+        <div class="section">
+          <h2>Experience</h2>
+          ${data.workExperience.map(exp => `
+            <div class="experience-item">
+              <div class="job-title">${exp.title}</div>
+              <div class="company">${exp.company}</div>
+              <div class="dates">${exp.startDate} - ${exp.endDate}</div>
+              <ul>
+                ${formatResponsibilities(exp.responsibilities)}
+              </ul>
             </div>
           `).join('')}
         </div>
-      ` : ''}
-    </body>
+
+        <div class="section">
+          <h2>Education</h2>
+          ${data.education.map(edu => `
+            <div class="education-item">
+              <div class="degree">${edu.degree}</div>
+              <div class="institution">${edu.institution}</div>
+              <div class="dates">Graduated: ${edu.graduationDate}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="section">
+          <h2>Skills</h2>
+          <div class="skills-section">
+            <div>
+              <strong>Technical Skills:</strong>
+              <p>${data.skills.technical}</p>
+            </div>
+            <div>
+              <strong>Soft Skills:</strong>
+              <p>${data.skills.softSkills}</p>
+            </div>
+            ${data.skills.tools ? `
+              <div>
+                <strong>Tools & Technologies:</strong>
+                <p>${data.skills.tools}</p>
+              </div>
+            ` : ''}
+            ${data.skills.languages ? `
+              <div>
+                <strong>Languages:</strong>
+                <p>${data.skills.languages}</p>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        ${data.certifications.length > 0 ? `
+          <div class="section">
+            <h2>Certifications</h2>
+            ${data.certifications.map(cert => `
+              <div>
+                <strong>${cert.name}</strong>
+                <p>${cert.issuer} | ${cert.date}</p>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </body>
     </html>
   `;
 };

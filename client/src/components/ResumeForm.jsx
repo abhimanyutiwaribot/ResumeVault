@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { saveResume, generateResumeHTML } from '../services/resumeService';
 import { powerVerbs, exampleStatements, industryKeywords, strengthenStatement } from '../services/resumeSuggestions';
+import html2pdf from 'html2pdf.js';
 
 const ResumeForm = ({ onSave, onClose }) => {
   const [formData, setFormData] = useState({
@@ -133,26 +134,48 @@ const ResumeForm = ({ onSave, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Save to Firestore
       const resumeId = await saveResume(formData);
-      
-      // Generate HTML
       const resumeHTML = generateResumeHTML(formData);
       
-      // Create a Blob and download
-      const blob = new Blob([resumeHTML], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${formData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const element = document.createElement('div');
+      element.innerHTML = resumeHTML;
+      document.body.appendChild(element);
+      
+      const options = {
+        margin: 0.4,
+        filename: `${formData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2,
+          letterRendering: true,
+          useCORS: true,
+          scrollY: -window.scrollY
+        },
+        jsPDF: { 
+          unit: 'in', 
+          format: 'letter', 
+          orientation: 'portrait',
+          compress: true,
+          hotfixes: ["px_scaling"],
+          pagesplit: true
+        },
+        pagebreak: { mode: ['avoid-all'] }
+      };
 
-      // Close dialog and notify parent
-      onSave({ ...formData, id: resumeId });
-      onClose();
+      // Force single page by scaling if needed
+      html2pdf().from(element).set(options).toPdf().get('pdf').then((pdf) => {
+        const totalPages = pdf.internal.getNumberOfPages();
+        if (totalPages > 1) {
+          const scale = 1 / totalPages;
+          options.html2canvas.scale = options.html2canvas.scale * scale;
+          return html2pdf().from(element).set(options).save();
+        }
+        return html2pdf().from(element).set(options).save();
+      }).then(() => {
+        document.body.removeChild(element);
+        onSave({ ...formData, id: resumeId });
+        onClose();
+      });
     } catch (error) {
       console.error('Error generating resume:', error);
       alert('Failed to generate resume. Please try again.');
